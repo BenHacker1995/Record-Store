@@ -10,8 +10,31 @@
 </head>
 <body>
     <h1>Record Store</h1>
+    <section id="inputDiv">
+        <h2>Add Record</h2>
+        <form>
+            <input type="text" id="artist" placeholder="Artist">
+            <input type="text" id="album" placeholder="Album">
+            <input type="number" id="year" placeholder="Year">
+            <input type="text" id="genre" placeholder="Genre">
+            <input type="submit" id="addButton" value="Add Record">
+        </form>
+    </section>
     <div id="output">
-        <ul id="outputList"></ul>
+        <h2>All Records</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Artist</th>
+                    <th>Album</th>
+                    <th>Year</th>
+                    <th>Genres</th>
+                </tr>
+            </thead>
+            <tbody id="records">
+                <!-- Records added by JavaScript -->
+            </tbody>
+        </table>
     </div>
 </body>
 </html>
