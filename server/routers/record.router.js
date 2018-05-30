@@ -1,35 +1,48 @@
 const express = require( 'express' );
-
-// Have express make me a new Router
 const router = express.Router();
 
 // Require Record
-const Record = require( '../modules/record.class' );
-// Make some records
-const recordArray = [
-    new Record( 'Beatles', 'Abbey Road', 1969, [ 'Rock' ] ),
-    new Record( 'Michael Jackson', 'Off the Wall', 1979, [ 'Pop' ] ),
-    new Record( 'Prince', 'Purple Rain', 1984, [ 'Pop' ] ),
-    new Record( 'Cibo Matto', 'Viva la Woman', 1990, [ 'Jpop' ])
-];
+const Record = require( '../modules/record.schema' );
 
 router.get( '/', ( req, res ) => {
-    console.log( 'Handling my GET for /record', req.body );
-    
-    res.send( recordArray );
-})
+    Record.find()
+        .then( (data) => {
+            console.log(`Got stuff back from mongo: ${data}`);
+            res.send(data)
+        })
+        .catch( (error) => {
+            console.log(`Error from mongo: ${error}`);
+            res.sendStatus(500);
+        })
+});
 
 router.post( '/', ( req, res ) => {
-    console.log( 'Handling my POST for /record' );
-    let sentRecord = req.body;
-    let record = new Record(
-        sentRecord.artist,
-        sentRecord.albumName,
-        sentRecord.year,
-        [ sentRecord.genreList ],
-    );
-    recordArray.push( record );
-    res.sendStatus( 201 );
-})
+    let recordData = req.body;
+    console.log( `Got the book data from request: ${recordData}` );
+    let newRecord = new Record(recordData);
+    console.log(`New record is ${newRecord}`);
+    newRecord.save()
+        .then(() => {
+            res.sendStatus( 201 );
+        })
+        .catch((error) => {
+            console.log(`Error adding record: ${error}`);
+            res.sendStatus(500);
+        });
+});
+
+router.delete('/', (req, res) => {
+    let recordId = req.query._id;
+    console.log(`Id for request is ${recordId}`);
+    Record.findByIdAndRemove(recordId)
+        .then(() => {
+            console.log(`Removed book ${bookId}`);
+            res.sendStatus(200);
+        })
+        .catch((error) => {
+            console.log(`Error removing record: ${error}`);
+            res.sendStatus(500);
+        });
+});
 
 module.exports = router;
