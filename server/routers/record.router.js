@@ -1,61 +1,36 @@
 const express = require( 'express' );
 const router = express.Router();
-
-// Require Record
-const Record = require( '../modules/record.schema' );
+let recordId = 1;
+const recordArray = [
+    {
+        artist: 'Metallica',
+        album: 'Hardwired... to Self-Destruct',
+        year: 2016,
+        genre: 'Metal'
+    }
+];
 
 router.get( '/', ( req, res ) => {
-    Record.find()
-        .then( (data) => {
-            console.log(`Got stuff back from mongo: ${data}`);
-            res.send(data)
-        })
-        .catch( (error) => {
-            console.log(`Error from mongo: ${error}`);
-            res.sendStatus(500);
-        })
+    console.log('In /record GET');
+    res.send( recordArray );
 });
 
 router.post( '/', ( req, res ) => {
-    let recordData = req.body;
-    console.log( `Got the book data from request: ${recordData}` );
-    let newRecord = new Record(recordData);
-    console.log(`New record is ${newRecord}`);
-    newRecord.save()
-        .then(() => {
-            res.sendStatus( 201 );
-        })
-        .catch((error) => {
-            console.log(`Error adding record: ${error}`);
-            res.sendStatus(500);
-        });
+    let record = req.body;
+    record.id = recordId++;
+    recordArray.push( record );
+    res.sendStatus( 201 );
 });
 
 router.delete('/', (req, res) => {
-    let recordId = req.query._id;
-    console.log(`Id for request is ${recordId}`);
-    Record.findByIdAndRemove(recordId)
-        .then(() => {
-            console.log(`Removed book ${req.query}`);
-            res.sendStatus(200);
-        })
-        .catch((error) => {
-            console.log(`Error removing record: ${error}`);
-            res.sendStatus(500);
-        });
-});
-
-router.put('/', (req, res) => {
-    let recordData = req.body;
-    Record.findByIdAndUpdate(req.body._id, recordData)
-    .then(() => {
-        console.log(`Updated record with id ${recordData._id}`);
-        res.sendStatus(200);
-
-    }).catch((error) => {
-        console.log(`Error updating record with id ${recordData._id}: ${error}`);
-        res.sendStatus(500);
-    });
+    let id = req.query.id;
+    for( let i = 0; i < recordArray.length; i++ ) {
+        let record = recordArray[i];
+        if ( recordId == record.id ) {
+            recordArray.splice( i, 1)
+        }
+    }
+    res.sendStatus( 200 );
 });
 
 module.exports = router;

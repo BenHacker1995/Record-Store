@@ -1,59 +1,56 @@
-$( document ).ready( readyNow );
+let recordApp = angular.module( 'recordApp', [] );
 
-function readyNow() {
-    $( 'tbody' ).empty();
-    getAllRecords();
-    $( '#addButton' ).on( 'click', function( event ){
-        event.preventDefault();
-        addRecord( getNewRecord() );
-    });
-}
+recordApp.controller( 'RecordController', ['$http', function( $http ){
+    let vm = this;
+    vm.records = [];
+    
+    vm.addRecord = function( record ) {
+        let newRecord = {
+            artist: vm.artistIn,
+            album: vm.albumIn,
+            year: vm.yearIn,
+            genre: vm.genreIn
+        }
+        $http( {
+            method: 'POST',
+            url: '/record',
+            data: newRecord
+        }).then( function( response ) {
+            console.log( 'Adding record as ', response );
+            vm.getRecords();
+        }).catch( function( error ) {
+            console.log( `Oh no!, error occurred: `, error );
+        });
+        vm.artistIn = '';
+        vm.albumIn = '';
+        vm.yearIn = '';
+        vm.genreIn = '';
+    } // end addRecord
+    
+    vm.getRecords = function() {
+        $http( {
+            method: 'GET',
+            url: '/record'
+        }).then( function( response ) {
+            console.log( 'Got response from server: ', response );
+            vm.records = response.data;
+        }).catch( function( error ) {
+            console.log( 'Error in GET: ', error );  
+        });
+    } // end getRecords
 
-function addRecord( record ) {
-    $.ajax( {
-        method: 'POST',
-        url: '/record',
-        data: record
-    }).then( function( response ) {
-        getAllRecords();
-    }).catch( function( response ) {
-        console.log( `Oh no!, ${ response.status } error occurred` );
-    });
-}
-
-function displayAllRecords( recordArray ) {
-    let $recordsTarget = $( '#records' );
-    $recordsTarget.empty();
-    for ( let record of recordArray ) {
-        $recordsTarget.append( makeRowFor( record ) );
-    }
-}
-
-function getAllRecords(){
-    $.ajax( {
-        method: 'GET',
-        url: '/record'
-    }).then( function( response ) {
-        displayAllRecords( response );
-    }); 
-}
-
-function getNewRecord() {
-    let record = {
-       artist: $( '#artist' ).val(),
-       albumName: $( '#album' ).val(),
-       year: $( '#year' ).val(),
-       genreList: $( '#genre' ).val()
-    }
-    return record;
-}
-
-function makeRowFor( record ) {
-    let rowHtml = `<tr>
-                       <td>${ record.artist }</td>
-                       <td>${ record.albumName }</td>
-                       <td>${ record.year }</td>
-                       <td>${ record.genreList.join( ', ' ) }</td>
-                   </tr>`;
-    return rowHtml;
-}
+    vm.removeRecord = function( index ) {
+        let recordToDelete = vm.records[index];
+        $http( {
+            method: 'DELETE',
+            url: `/record/?id=${recordToDelete.id}`
+        }).then( function( response ) {
+            console.log( 'DELETE successful for: ', response );
+            vm.getRecords();
+        }).catch( function( error ) {
+            console.log( 'Error occured: ', error );
+        })
+    } // end removeRecord
+    console.log( 'RecordController is created' );
+    vm.getRecords();
+}]); // end controller

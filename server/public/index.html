@@ -4,37 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="vendors/jquery-3.3.1.min.js"></script>
+    <script src="vendors/angular.min.js"></script>
     <script src="scripts/client.js"></script>
     <title>Record Store</title>
 </head>
 <body>
     <h1>Record Store</h1>
-    <section id="inputDiv">
-        <h2>Add Record</h2>
-        <form>
-            <input type="text" id="artist" placeholder="Artist">
-            <input type="text" id="album" placeholder="Album">
-            <input type="number" id="year" placeholder="Year">
-            <input type="text" id="genre" placeholder="Genre">
-            <input type="submit" id="addButton" value="Add Record">
-        </form>
-    </section>
-    <div id="output">
-        <h2>All Records</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Artist</th>
-                    <th>Album</th>
-                    <th>Year</th>
-                    <th>Genres</th>
-                </tr>
-            </thead>
-            <tbody id="records">
-                <!-- Records added by JavaScript -->
-            </tbody>
-        </table>
+    <div id="main" ng-app="recordApp">
+        <div ng-controller="RecordController as RC">
+            <div id="records">
+                <h2>Add Record</h2>
+                <input type="text" placeholder="Artist" ng-model="RC.artistIn">
+                <input type="text" placeholder="Album" ng-model="RC.albumIn">
+                <input type="number" placeholder="Year" ng-model="RC.yearIn">
+                <input type="text" placeholder="Genre" ng-model="RC.genreIn">
+                <button ng-click="RC.addRecord()">Add Record</button>
+                <hr>
+                <h2>All Records</h2>
+                <ul>
+                    <li ng-repeat="record in RC.records" ng-click="RC.removeRecord( $index )">{{ record.index }} {{ record.artist }} {{ record.album }} {{ record.year }} {{ record.genre }}</li>
+                </ul>
+            </div>
+        </div>
     </div>
 </body>
 </html>
