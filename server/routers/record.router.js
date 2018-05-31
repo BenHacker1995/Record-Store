@@ -36,13 +36,26 @@ router.delete('/', (req, res) => {
     console.log(`Id for request is ${recordId}`);
     Record.findByIdAndRemove(recordId)
         .then(() => {
-            console.log(`Removed book ${bookId}`);
+            console.log(`Removed book ${req.query}`);
             res.sendStatus(200);
         })
         .catch((error) => {
             console.log(`Error removing record: ${error}`);
             res.sendStatus(500);
         });
+});
+
+router.put('/', (req, res) => {
+    let recordData = req.body;
+    Record.findByIdAndUpdate(req.body._id, recordData)
+    .then(() => {
+        console.log(`Updated record with id ${recordData._id}`);
+        res.sendStatus(200);
+
+    }).catch((error) => {
+        console.log(`Error updating record with id ${recordData._id}: ${error}`);
+        res.sendStatus(500);
+    });
 });
 
 module.exports = router;

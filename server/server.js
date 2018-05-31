@@ -10,7 +10,7 @@ app.use( bodyParser.json());
 const mongoose = require( 'mongoose' );
 
 const DATABASE_NAME = 'library';
-const DATABASE_URL = `mongodb://localhost:27017/${DATABASE_URL}`;
+const DATABASE_URL = `mongodb://localhost:27017/${DATABASE_NAME}`;
 mongoose.connect( DATABASE_URL );
 
 mongoose.connection.on('connected', () => {

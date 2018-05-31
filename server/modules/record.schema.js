@@ -5,7 +5,7 @@ const recordSchema = new Schema(
     {
         artist: { type: String, required: true },
         album: { type: String, required: true, unique: true },
-        year: { type: Date, required: true },
+        year: { type: Number, required: true },
         genre: { type: String, required: true, unique: true }
     }
 );
